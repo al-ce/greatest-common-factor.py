@@ -50,112 +50,150 @@ class PrimeFactorTree:
         return True
 
 
-def get_gcf_and_runtime(selection: str, nums: list):
-    start = datetime.now()
-    gcf = algos[selection](nums)
-    end = datetime.now()
+class GCFCalculator:
+    def __init__(self, nums: list):
+        self.algos = {
+            "Euclidean": self.gcf_by_euclidean,
+            "Factoring": self.gcf_by_factoring,
+            "Prime Factorization": self.gcf_by_prime_factorization,
+        }
+        self.results = self.get_gcf_and_algo_runtimes(nums)
 
-    print(f"GCF: {gcf}")
+    def convert_nums_to_str(self, nums):
+        """Convert a list of numbers to a csv row."""
+        nums_str = "Numbers:"
+        for num in nums:
+            nums_str += f" {num}"
+        return nums_str
 
-    td = (end - start).total_seconds() * 10**3
-    print(f"Runtime of {selection} Algorithm: {td:.03f}ms")
+    def get_gcf_and_algo_runtimes(self, nums):
+        """Return the GCF of the list of nums and the runtime of each
+        implemented algorithm as a string."""
 
+        gcf_values = {}
+        runtimes = ""
 
-def gcf_by_euclidean(nums: list) -> int:
+        for name, algorithm in self.algos.items():
+            gcf, runtime = self.get_algo_data(algorithm, nums)
+            gcf_values[name] = gcf
+            runtimes += f"{name} Algorithm runtime: {runtime}\n"
 
-    if len(nums) > 2:
-        # Replace the first two nums in the list with their GCF
-        a = gcf_by_euclidean(nums[0:2])
-        nums = [a]+nums[2:]
-        return gcf_by_euclidean(nums)
+        self.bug_check(gcf_values)
 
-    a = nums[0]
-    b = nums[1]
-    # print(f"A: {a}\nB: {b}")
+        num_str = self.convert_nums_to_str(nums)
+        gcf = list(gcf_values.values())[0]
+        results = f"Numbers: {num_str}\nGCF: {gcf}\n{runtimes}"
+        return results
 
-    # If A = 0 then GCD(A,B)=B, since the GCD(0,B)=B, and we can stop.
-    if a == 0:
-        return b
-    # If B = 0 then GCD(A,B)=A, since the GCD(A,0)=A, and we can stop.
-    elif b == 0:
-        return a
+    def bug_check(self, gcf_values: dict):
+        """Raise an error if the algorithms return differing values."""
+        gcfs = {gcf for gcf in gcf_values.values()}
+        length = len(gcfs)
 
-    # q = round(a/b)  # quotient
-    r = a % b       # remainder
+        if length == 1:
+            return None
 
-    # Write A in quotient remainder form (A = B⋅Q + R)
-    # print(f"{a} = {b} * {q} + {r}\n")
-    # Find GCD(B,R) using the Euclidean Algorithm since GCD(A,B) = GCD(B,R)
-    return gcf_by_euclidean([b, r])  # def euclidean(nums):
+        msg = "Algorithms returned differing values.\n"
 
+        for algo_name, gcf in gcf_values.items():
+            msg += f"{algo_name:<20} algorithm returned {gcf}\n"
+        raise Exception(msg)
 
-def gcf_by_factoring(nums: list) -> int:
+    def get_algo_data(self, algorithm, nums: list):
+        """Return gcf (int) and runtime (str) for a given GCF algorithm."""
 
-    # Get sets of the factors of each number and add them to a list
-    factors_sets = []
-    for num in nums:
-        factors_sets.append(set(factorization(num)))
+        start = datetime.now()
+        gcf = algorithm(nums)
+        end = datetime.now()
 
-    # Get the common factors of all the numbers
-    common_factors = set.intersection(*factors_sets)
-    return max(common_factors)
+        td = (end - start).total_seconds() * 10**3
+        return gcf, f"{td:.03f}ms"
 
+    def gcf_by_euclidean(self, nums: list) -> int:
+        """Get the GCF of a list of nums with the Euclidean Algorithm."""
 
-def factorization(n: int) -> list:
-    """Get all the factors of an integer"""
-    s = sqrt(n).__floor__()  # call .__floor__ to round down
-    factors = []
-    for i in range(2, s+1):
-        q = n/i  # quotient
-        if q.is_integer():
-            factors += [int(q), i]
-    return factors
+        if len(nums) > 2:
+            # Replace the first two nums in the list with their GCF
+            a = self.gcf_by_euclidean(nums[0:2])
+            nums = [a]+nums[2:]
+            return self.gcf_by_euclidean(nums)
 
+        a = nums[0]
+        b = nums[1]
+        # print(f"A: {a}\nB: {b}")
 
-def gcf_by_prime_factorization(nums: list) -> int:
-    prime_factors_lists = []
-    for num in nums:
-        primes = PrimeFactorTree(num).primes
-        prime_factors_lists.append(primes)
+        # If A = 0 then GCD(A,B)=B, since the GCD(0,B)=B, and we can stop.
+        if a == 0:
+            return b
+        # If B = 0 then GCD(A,B)=A, since the GCD(A,0)=A, and we can stop.
+        elif b == 0:
+            return a
 
-    common_factors = set([p for primes in prime_factors_lists for p in primes])
+        # q = round(a/b)  # quotient
+        r = a % b       # remainder
 
-    occurrences = []
-    for p in common_factors:
-        min_p = float('inf')
-        for primes in prime_factors_lists:
-            # Count the occurrences of p for this list of prime factors
-            p_count = primes.count(p)
-            if p_count < min_p:
-                min_p = p_count
-        # Add the highest number of occurrences of each prime factor that is
-        # common to each number to occurrences list
-        occurrences.extend([p for i in range(min_p)])
+        # Write A in quotient remainder form (A = B⋅Q + R)
+        # print(f"{a} = {b} * {q} + {r}\n")
+        # Find GCD(B,R) using the Euclidean Algorithm since GCD(A,B) = GCD(B,R)
+        return self.gcf_by_euclidean([b, r])  # def euclidean(nums):
 
-    gcf = reduce(lambda x, y: x*y, occurrences)
-    return gcf
+    def gcf_by_factoring(self, nums: list) -> int:
 
+        # Get sets of the factors of each number and add them to a list
+        factors_sets = []
+        for num in nums:
+            factors_sets.append(set(self.factorization(num)))
 
-algos = {
-    "Euclidean": gcf_by_euclidean,
-    "Factoring": gcf_by_factoring,
-    "Prime Factorization": gcf_by_prime_factorization,
-}
+        # Get the common factors of all the numbers
+        common_factors = set.intersection(*factors_sets)
+        return max(common_factors)
+
+    def factorization(self, n: int) -> list:
+        """Get all the factors of an integer"""
+        s = sqrt(n).__floor__()  # call .__floor__ to round down
+        factors = []
+        for i in range(2, s+1):
+            q = n/i  # quotient
+            if q.is_integer():
+                factors += [int(q), i]
+        return factors
+
+    def gcf_by_prime_factorization(self, nums: list) -> int:
+        prime_factors_lists = []
+        for num in nums:
+            primes = PrimeFactorTree(num).primes
+            prime_factors_lists.append(primes)
+
+        common_factors = set(
+            [p for primes in prime_factors_lists for p in primes])
+
+        occurrences = []
+        for p in common_factors:
+            min_p = float('inf')
+            for primes in prime_factors_lists:
+                # Count the occurrences of p for this list of prime factors
+                p_count = primes.count(p)
+                if p_count < min_p:
+                    min_p = p_count
+            # Add the highest number of occurrences of each prime factor that is
+            # common to each number to occurrences list
+            occurrences.extend([p for i in range(min_p)])
+
+        gcf = reduce(lambda x, y: x*y, occurrences)
+        return gcf
+
 
 if __name__ == "__main__":
     list_one = [18, 27]
     list_two = [20, 50, 120]
     list_three = [182664, 154875, 137688]
+    list_four = [182664, 1548787456, 1345877688, 84, 849845486, 9848754542, 498498746546548]
 
-    print("----")
-    get_gcf_and_runtime("Euclidean", list_one)
-    get_gcf_and_runtime("Factoring", list_one)
-    get_gcf_and_runtime("Prime Factorization", list_one)
-    print("----")
-    get_gcf_and_runtime("Euclidean", list_two)
-    get_gcf_and_runtime("Factoring", list_two)
-    get_gcf_and_runtime("Prime Factorization", list_three)
-    print("----")
-    get_gcf_and_runtime("Euclidean", list_three)
-    get_gcf_and_runtime("Factoring", list_three)
-    get_gcf_and_runtime("Prime Factorization", list_three)
+    gcf_one = GCFCalculator(list_one).results
+    print(gcf_one)
+    gcf_two = GCFCalculator(list_two).results
+    print(gcf_two)
+    gcf_three = GCFCalculator(list_three).results
+    print(gcf_three)
+    # gcf_four = GCFCalculator(list_four).results
+    # print(gcf_four)
