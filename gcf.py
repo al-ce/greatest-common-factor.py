@@ -3,7 +3,8 @@
 # https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 
 from datetime import datetime
-from math import sqrt
+from math import gcd, sqrt
+from random import randint
 from functools import reduce
 
 
@@ -51,15 +52,19 @@ class PrimeFactorTree:
 
 
 class GCFCalculator:
-    def __init__(self, nums: list):
-        self.algos = {
+    def __init__(self, nums=[1, 1], tests=1):
+        self.algos = self.get_algos_dict()
+        self.results = self.get_gcf_and_algo_runtimes(nums, tests)
+
+    def get_algos_dict(self):
+        algos = {
             "Euclidean": self.gcf_by_euclidean,
             "Factoring": self.gcf_by_factoring,
-            "Prime Factorization": self.gcf_by_prime_factorization,
+            "Prime Fct": self.gcf_by_prime_factorization,
         }
-        self.results = self.get_gcf_and_algo_runtimes(nums)
+        return algos
 
-    def bug_check(self, gcf_values: dict):
+    def same_gcf_check(self, gcf_values: dict):
         """Raise an error if the algorithms return differing values."""
         gcfs = {gcf for gcf in gcf_values.values()}
         length = len(gcfs)
@@ -70,7 +75,7 @@ class GCFCalculator:
         msg = "Algorithms returned differing values.\n"
 
         for algo_name, gcf in gcf_values.items():
-            msg += f"{algo_name:<20} algorithm returned {gcf}\n"
+            msg += f"{algo_name} algorithm returned {gcf}\n"
         raise Exception(msg)
 
     def convert_nums_to_str(self, nums):
@@ -159,17 +164,23 @@ class GCFCalculator:
 
         return gcf
 
-    def get_algo_data(self, algorithm, nums: list):
-        """Return gcf (int) and runtime (str) for a given GCF algorithm."""
+    def get_algo_data(self, algorithm, nums: list, tests):
+        """Return gcf (int) and runtime (str) for a given GCF algorithm. Run
+        `tests` number of times and take the average."""
 
-        start = datetime.now()
-        gcf = algorithm(nums)
-        end = datetime.now()
+        runtimes = []
+        for i in range(tests):
+            start = datetime.now()
+            gcf = algorithm(nums)
+            end = datetime.now()
 
-        td = (end - start).total_seconds() * 10**3
-        return gcf, f"{td:.03f}ms"
+            runtimes.append((end - start).total_seconds() * 10**3)
 
-    def get_gcf_and_algo_runtimes(self, nums):
+        td = sum(runtimes) / tests
+
+        return gcf, f"avg {td:.03f}ms over {tests} tests"
+
+    def get_gcf_and_algo_runtimes(self, nums, tests):
         """Return the GCF of the list of nums and the runtime of each
         implemented algorithm as a string."""
 
@@ -177,11 +188,11 @@ class GCFCalculator:
         runtimes = ""
 
         for name, algorithm in self.algos.items():
-            gcf, runtime = self.get_algo_data(algorithm, nums)
+            gcf, runtime = self.get_algo_data(algorithm, nums, tests)
             gcf_values[name] = gcf
-            runtimes += f"{name} Algorithm runtime: {runtime}\n"
+            runtimes += f"{name} algorithm runtime: {runtime}\n"
 
-        self.bug_check(gcf_values)
+        self.same_gcf_check(gcf_values)
 
         num_str = self.convert_nums_to_str(nums)
         gcf = list(gcf_values.values())[0]
@@ -189,8 +200,35 @@ class GCFCalculator:
         results = f"{num_str}\nGCF: {gcf}\n{runtimes}"
         return results
 
+class Test(GCFCalculator):
+    def __init__(self):
+        self.algos = self.get_algos_dict()
+        self.correct_result_check()
+
+    def correct_result_check(self):
+        """Check that each algorithm returns the same result as provided by the
+        `math.gcd` method. This is a test run at program start, meant to go
+        unnoticed by the user, to check that the algorithms have been
+        implemented correctly."""
+
+        # Expected GCFs: 9, 8, 2376, 10, 1
+        numbers = [[18, 27], [72, 40], [33264, 35640], [120, 50, 20], [1, 20]]
+
+        for nums in numbers:
+            for name, algorithm in self.algos.items():
+
+                algo_gcf = self.get_algo_data(algorithm, nums, 1)[0]
+                py_math_gcd = gcd(*nums)
+                # print(algo_gcf)
+                # print(py_math_gcd)
+                if algo_gcf != py_math_gcd:
+                    raise Exception(
+                        f"{name} algorithm did not return the same result as math.gcd method\n"
+                        f"Expected: {py_math_gcd}\nGot:      {algo_gcf}")
+
 
 def main():
+    test_calc = Test()
 
     selections = {
         "1": ("Get GCF from user input of numbers", user_input),
@@ -203,28 +241,49 @@ def main():
         if usr_in == "q":
             quit()
         elif usr_in in selections:
+            tests = how_many_tests()
             print("")
-            selections[usr_in][1]()
+            selections[usr_in][1](tests)
         else:
             print("Invalid selection.")
 
 
-def sample_data():
+def sample_data(tests):
     list_one = [18, 27]
     list_two = [20, 50, 120]
     list_three = [182664, 154875, 137688]
     # list_four = [182664, 1548787456, 1345877688, 849845486, 9848754542, 498498746546548]
-    gcf_one = GCFCalculator(list_one).results
+    gcf_one = GCFCalculator(list_one, tests).results
     print(gcf_one)
-    gcf_two = GCFCalculator(list_two).results
+    gcf_two = GCFCalculator(list_two, tests).results
     print(gcf_two)
-    gcf_three = GCFCalculator(list_three).results
+    gcf_three = GCFCalculator(list_three, tests).results
     print(gcf_three)
     # gcf_four = GCFCalculator(list_four).results
     # print(gcf_four)
 
 
-def user_input():
+def how_many_tests():
+    """Ask user how many times to run each algorithm."""
+    err = "Input must be a positive integer."
+    while True:
+        try:
+            usr_in = input(
+                "Number of times to run each algorithm (press <Enter> for once): ").strip()
+            if usr_in == "":
+                tests = 1
+                break
+            elif int(usr_in) < 1:
+                print(err)
+            else:
+                tests = int(usr_in)
+                break
+        except ValueError:
+            print(err)
+    return tests
+
+
+def user_input(tests):
     nums = []
     while True:
         try:
@@ -236,7 +295,7 @@ def user_input():
         except ValueError:
             print("Input must be an integer.")
 
-    gcf_data = GCFCalculator(nums).results
+    gcf_data = GCFCalculator(nums, tests).results
     print(f"\n{gcf_data}")
 
 
