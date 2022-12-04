@@ -4,7 +4,6 @@
 
 from time import perf_counter_ns
 from math import gcd, sqrt
-from random import randint
 from functools import reduce
 
 
@@ -57,15 +56,19 @@ class GCFCalculator:
         self.results = self.get_gcf_and_algo_runtimes(nums, tests)
 
     def get_algos_dict(self):
+        """Return a dict with {algorith name}, {algorith function} pairs."""
+
         algos = {
             "Euclidean": self.gcf_by_euclidean,
             "Factoring": self.gcf_by_factoring,
             "Prime Fct": self.gcf_by_prime_factorization,
         }
+
         return algos
 
     def same_gcf_check(self, gcf_values: dict):
         """Raise an error if the algorithms return differing values."""
+
         gcfs = {gcf for gcf in gcf_values.values()}
         length = len(gcfs)
 
@@ -76,19 +79,25 @@ class GCFCalculator:
 
         for algo_name, gcf in gcf_values.items():
             msg += f"{algo_name} algorithm returned {gcf}\n"
+
         raise Exception(msg)
 
     def convert_nums_to_str(self, nums):
-        """Convert a list of numbers to a csv row."""
+        """Convert a list of numbers to a csv string."""
+
         nums_str = "Numbers:"
+
         for num in nums:
             nums_str += f" {num}"
+
         return nums_str
 
     def factorization(self, n: int) -> list:
         """Get all the factors of an integer"""
+
         s = sqrt(n).__floor__()  # call .__floor__ to round down
         factors = []
+
         for i in range(2, s+1):
             q = n/i  # quotient
             if q.is_integer():
@@ -120,10 +129,12 @@ class GCFCalculator:
 
         # Write A in quotient remainder form (A = B⋅Q + R)
         # print(f"{a} = {b} * {q} + {r}\n")
+
         # Find GCD(B,R) using the Euclidean Algorithm since GCD(A,B) = GCD(B,R)
         return self.gcf_by_euclidean([b, r])  # def euclidean(nums):
 
     def gcf_by_factoring(self, nums: list) -> int:
+        """Get the GCF of a list of nums by returning the max of their common factors."""
 
         # Get sets of the factors of each number and add them to a list
         factors_sets = []
@@ -139,7 +150,12 @@ class GCFCalculator:
         return gcf
 
     def gcf_by_prime_factorization(self, nums: list) -> int:
+        """Get the GCF of a list of nums by returning the product of their
+        common prime factors multiplied by the highest occurence of these
+        factors across all nums."""
+
         prime_factors_lists = []
+
         for num in nums:
             primes = PrimeFactorTree(num).primes
             prime_factors_lists.append(primes)
@@ -148,6 +164,7 @@ class GCFCalculator:
             [p for primes in prime_factors_lists for p in primes])
 
         occurrences = []
+
         for p in common_factors:
             min_p = float('inf')
             for primes in prime_factors_lists:
@@ -250,10 +267,15 @@ def main():
 
 
 def sample_data(tests):
+    """Print the GCF of pre-determined lists of nums, running all the
+    implemented algos (see the .algos attr in the GCFCalculator class.)"""
+
     list_one = [18, 27]
     list_two = [20, 50, 120]
     list_three = [182664, 154875, 137688]
+    # list_four is quite large and takes a while to run
     # list_four = [182664, 1548787456, 1345877688, 849845486, 9848754542, 498498746546548]
+
     gcf_one = GCFCalculator(list_one, tests).results
     print(gcf_one)
     gcf_two = GCFCalculator(list_two, tests).results
@@ -266,11 +288,13 @@ def sample_data(tests):
 
 def how_many_tests():
     """Ask user how many times to run each algorithm."""
+
     err = "Input must be a positive integer."
     while True:
         try:
             usr_in = input(
                 "Number of times to run each algorithm (press <Enter> for once): ").strip()
+
             if usr_in == "":
                 tests = 1
                 break
@@ -279,12 +303,16 @@ def how_many_tests():
             else:
                 tests = int(usr_in)
                 break
+
         except ValueError:
             print(err)
+
     return tests
 
 
 def user_input(tests):
+    """Get numbers from user to calculate GCF."""
+
     nums = []
     err = "Input must be a positive integer."
 
