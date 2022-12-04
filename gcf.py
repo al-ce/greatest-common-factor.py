@@ -286,15 +286,19 @@ def how_many_tests():
 
 def user_input(tests):
     nums = []
+    err = "Input must be a positive integer."
+
     while True:
         try:
             usr_in = input(
                 "Enter number (0 to finish entries): ").strip()
             if usr_in == "0":
                 break
+            elif int(usr_in) < 1:
+                print(err)
             nums.append(int(usr_in))
         except ValueError:
-            print("Input must be an integer.")
+            print(err)
 
     gcf_data = GCFCalculator(nums, tests).results
     print(f"\n{gcf_data}")
