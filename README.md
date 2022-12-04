@@ -76,7 +76,7 @@ https://user-images.githubusercontent.com/23170004/205469675-1789d443-f8ad-44c0-
   This doesn't guarantee that any of the algorithms returned the *correct* result, but hopefully in tinkering or refactoring we only make a mistake on one of the algorithms at a time, so we can easily spot where that happened. Again, this doesn't catch anything that wouldn't be caught by the `Test` object, but in case something happens to that that goes un-noticed, this check gives us the benefit of telling us that something is wrong with *a*) one or more of our algorithms *b*) the `Test` object.
 
 ### :triangular_ruler: Measurements
-* Runtime measurements are calculated by getting the difference of `datetime.now()` at the start and end of each algorithm function call. Implementing a more rigourous method is on the TODOs.
+* Runtime measurements are calculated by getting the difference of `time.perf_counter()` at the start and end of each algorithm function call. Implementing a more rigourous method is on the TODOs.
 
 ## :arrow_right: Results
 

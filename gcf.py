@@ -2,7 +2,7 @@
 # https://www.calculatorsoup.com/calculators/math/gcf.php
 # https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 
-from datetime import datetime
+from time import perf_counter_ns
 from math import gcd, sqrt
 from random import randint
 from functools import reduce
@@ -170,13 +170,13 @@ class GCFCalculator:
 
         runtimes = []
         for i in range(tests):
-            start = datetime.now()
+            start = perf_counter_ns()
             gcf = algorithm(nums)
-            end = datetime.now()
+            end = perf_counter_ns()
+            #
+            runtimes.append((end - start) / 1_000_000)
 
-            runtimes.append((end - start).total_seconds() * 10**3)
-
-        td = sum(runtimes) / tests
+        td = (sum(runtimes) / tests)
 
         return gcf, f"avg {td:.03f}ms over {tests} tests"
 
@@ -199,6 +199,7 @@ class GCFCalculator:
         gcf = "1 (relatively prime)" if gcf == 1 else gcf
         results = f"{num_str}\nGCF: {gcf}\n{runtimes}"
         return results
+
 
 class Test(GCFCalculator):
     def __init__(self):
