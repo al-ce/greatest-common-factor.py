@@ -153,8 +153,8 @@ class GCFCalculator:
             for primes in prime_factors_lists:
                 # Count the occurrences of p for this list of prime factors
                 p_count = primes.count(p)
-                if p_count < min_p:
-                    min_p = p_count
+                min_p = min(min_p, p_count)
+
             # Add the highest number of occurrences of each prime factor that is
             # common to each number to occurrences list
             occurrences.extend([p for i in range(min_p)])
