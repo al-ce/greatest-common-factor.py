@@ -96,7 +96,7 @@ class GCFCalculator:
         """Get all the factors of an integer"""
 
         s = sqrt(n).__floor__()  # call .__floor__ to round down
-        factors = []
+        factors = [n]
 
         for i in range(2, s+1):
             q = n/i  # quotient
@@ -221,7 +221,6 @@ class GCFCalculator:
 class Test(GCFCalculator):
     def __init__(self):
         self.algos = self.get_algos_dict()
-        self.correct_result_check()
 
     def correct_result_check(self):
         """Check that each algorithm returns the same result as provided by the
@@ -230,7 +229,8 @@ class Test(GCFCalculator):
         implemented correctly."""
 
         # Expected GCFs: 9, 8, 2376, 10, 1
-        numbers = [[18, 27], [72, 40], [33264, 35640], [120, 50, 20], [1, 20]]
+        numbers = [[3, 7], [19, 3, 7], [2, 3], [7, 21], [18, 27],
+                   [72, 40], [33264, 35640], [120, 50, 20], [1, 20]]
 
         for nums in numbers:
             for name, algorithm in self.algos.items():
@@ -242,11 +242,12 @@ class Test(GCFCalculator):
                 if algo_gcf != py_math_gcd:
                     raise Exception(
                         f"{name} algorithm did not return the same result as math.gcd method\n"
+                        f"Numbers:  {nums}\n"\
                         f"Expected: {py_math_gcd}\nGot:      {algo_gcf}")
 
 
 def main():
-    test_calc = Test()
+    Test().correct_result_check()
 
     selections = {
         "1": ("Get GCF from user input of numbers", user_input),
@@ -270,11 +271,12 @@ def sample_data(tests):
     """Print the GCF of pre-determined lists of nums, running all the
     implemented algos (see the .algos attr in the GCFCalculator class.)"""
 
-    list_one = [18, 27]
-    list_two = [20, 50, 120]
-    list_three = [182664, 154875, 137688]
-    # list_four is quite large and takes a while to run
-    # list_four = [182664, 1548787456, 1345877688, 849845486, 9848754542, 498498746546548]
+    list_one = [3, 15]
+    list_two = [18, 27]
+    list_three = [20, 50, 120]
+    list_four = [182664, 154875, 137688]
+    # list_five is quite large and takes a while to run
+    # list_five = [182664, 1548787456, 1345877688, 849845486, 9848754542, 498498746546548]
 
     gcf_one = GCFCalculator(list_one, tests).results
     print(gcf_one)
@@ -282,8 +284,10 @@ def sample_data(tests):
     print(gcf_two)
     gcf_three = GCFCalculator(list_three, tests).results
     print(gcf_three)
-    # gcf_four = GCFCalculator(list_four).results
-    # print(gcf_four)
+    gcf_four = GCFCalculator(list_four, tests).results
+    print(gcf_four)
+    # gcf_five = GCFCalculator(list_five).results
+    # print(gcf_six)
 
 
 def how_many_tests():
@@ -324,7 +328,8 @@ def user_input(tests):
                 break
             elif int(usr_in) < 1:
                 print(err)
-            nums.append(int(usr_in))
+            else:
+                nums.append(int(usr_in))
         except ValueError:
             print(err)
 
