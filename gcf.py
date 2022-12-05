@@ -42,11 +42,9 @@ class PrimeFactorTree:
 
         for i in range(2, s + 1):
             if node.value % i == 0:
-                node.left == self.prime_factorization(i)
-                node.right == self.prime_factorization(n//i)
+                self.prime_factorization(i)
+                self.prime_factorization(n//i)
                 break
-
-        return node
 
 
 class GCFCalculator:
@@ -265,7 +263,7 @@ def sample_data(tests):
 
     test_lists = [[3, 7], [18, 27], [20, 50, 120], [182664, 154875, 137688]]
 
-    [print(GCFCalculator(test_list, tests).results) for test_list in test_lists]
+    [print(GCFCalculator(num_list, tests).results) for num_list in test_lists]
 
 
 def how_many_tests():
