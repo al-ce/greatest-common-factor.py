@@ -3,21 +3,32 @@
 This is a CLI program written in Python to
 
 1) Display the **GCF** (greatest common factor) of numbers in a list using various algorithms
-2) Display the **runtime** of each algorithm
+2) Display the **runtime** of each algorithm.
+
+Comparing the runtime of each algorithm is the more interesting part of this program, as Python's `math.gcd` function can get the GCF without all this implementation.
 
 
 
 https://user-images.githubusercontent.com/23170004/205469921-06a6c7d9-232f-4d5e-bbc4-e02c6c636cbc.mp4
 
 
-
-
+## Table of Contents
+* [Why this program?](#question-why)
+* [Usage](#beginner-usage)
+    - [Manual number input](#pencil-manual-number-input)
+    - [Sample lists](#ledger-sample-lists)
+* [Implemented Algorithms](#pagewithcurl-implemented-algorithms)
+* [Features](#features)
+    - [Tests](#whitecheckmark-tests)
+    - [Measurements](#triangularruler-measurements)
+* [Results](#arrowright-results)
+* [TODOs](#clock11-todos)
 
 ## :question: Why
 
 I initially wanted a simple personal CLI tool to get the greatest common factor to check my work by hand, but I decided to make it a fun mini-project to practice some Python and math concepts.
 
-## :beginner: How to use
+## :beginner: Usage
 
 No dependencies, just run `python gcf.py`.
 
@@ -30,7 +41,7 @@ After running `python gcf.py`, type `1` to manually input a list of numbers.
 The program will only accept integers, except for `q`, which quits the program.
 The implemented `while` loop won't break until the user inputs `0`.
 
-(Zero was chosen as the break-input since the GCF of any list of numbers containing 0 must be 0. Similarly, the GCF of any list of numbers containing 1 will be 1, but the program will accept this and run the algorithms anyway so we can still display the runtime, and the GCF displayed will also note that the numbers are [relatively prime](https://en.wikipedia.org/wiki/Coprime_integers))
+(Zero was chosen as the break-input since the GCF of any list of numbers containing zero must be the GCF of the same list without zero. Similarly, the GCF of any list of numbers containing 1 will be 1, but the program will accept this and run the algorithms anyway so we can still display the runtime, and the GCF displayed will also note that the numbers are [relatively prime](https://en.wikipedia.org/wiki/Coprime_integers))
 
 ### :ledger: Sample Lists
 After running `python gcf.py`, type `2` to manually input a list of numbers.
@@ -60,8 +71,7 @@ https://user-images.githubusercontent.com/23170004/205469673-a3b5cfc5-ad4d-485f-
 
 
 
-* As a redundant backup, at the end of each check run by the user (manual or
-  sample), a `same_gcf_check` checks the dict of GCFs returned by each algorithm. If the `set` of these values is of length > 1, then one or more of the algorithms returned a value different from the rest. The function raises an exception and displays what each algorithm returned.
+* As a backup test, at the end of each check run by the user (manual or sample), a `same_gcf_check` checks the dict of GCFs returned by each algorithm. If the `set` of these values is of length > 1, then one or more of the algorithms returned a value different from the rest. The function raises an exception and displays what each algorithm returned.
   
   
   
@@ -73,7 +83,8 @@ https://user-images.githubusercontent.com/23170004/205469675-1789d443-f8ad-44c0-
 
 
   
-  This doesn't guarantee that any of the algorithms returned the *correct* result, but hopefully in tinkering or refactoring we only make a mistake on one of the algorithms at a time, so we can easily spot where that happened. Again, this doesn't catch anything that wouldn't be caught by the `Test` object, but in case something happens to that that goes un-noticed, this check gives us the benefit of telling us that something is wrong with *a*) one or more of our algorithms *b*) the `Test` object.
+  This doesn't guarantee that any of the algorithms returned the *correct* result, but hopefully in tinkering or refactoring we only make a mistake on one of the algorithms at a time, so we can easily spot where that happened. This doesn't catch anything that wouldn't be caught by the `Test` object, assuming the `Test` object is being fed a similar test case on initilization as the case the user is inputting manually. But in case a bug is introduced to the `Test` object that goes un-noticed, this check gives us the benefit of telling us that *a*) there is a bug in one or more of our algorithms *b*) there is a bug in the `Test` object *c*) there is a special case the program hasn't accounted for.
+
 
 ### :triangular_ruler: Measurements
 * Runtime measurements are calculated by getting the difference of `time.perf_counter()` at the start and end of each algorithm function call. Implementing a more rigourous method is on the TODOs.

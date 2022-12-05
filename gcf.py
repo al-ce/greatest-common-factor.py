@@ -19,7 +19,7 @@ class PrimeFactorTree:
 
     def __init__(self, value: int):
         # Initialize an empty list if this is the first call.
-        self.primes = []
+        self.prime_factors = []
         self.root = self.prime_factorization(value)
 
     def is_prime(self, n):
@@ -35,7 +35,7 @@ class PrimeFactorTree:
         node = Node(n)
 
         if self.is_prime(n):
-            self.primes.append(n)
+            self.prime_factors.append(n)
             return node
 
         s = sqrt(n).__floor__()  # call .__floor__ to round down
@@ -110,7 +110,7 @@ class GCFCalculator:
         if len(nums) > 2:
             # Replace the first two nums in the list with their GCF
             a = self.gcf_by_euclidean(nums[0:2])
-            nums = [a]+nums[2:]
+            nums = [a] + nums[2:]
             return self.gcf_by_euclidean(nums)
 
         a = nums[0]
@@ -154,10 +154,12 @@ class GCFCalculator:
         common prime factors multiplied by the highest occurence of these
         factors across all nums."""
 
+        # A list of lists - the nested lists are the list of prime factors
         prime_factors_lists = []
 
         for num in nums:
-            primes = PrimeFactorTree(num).primes
+            # Get the list of all prime factors of num
+            primes = PrimeFactorTree(num).prime_factors
             prime_factors_lists.append(primes)
 
         common_factors = set(
@@ -181,16 +183,20 @@ class GCFCalculator:
 
         return gcf
 
-    def get_algo_data(self, algorithm, nums: list, tests):
+    def get_algo_data(self, algorithm: callable, nums: list, tests):
         """Return gcf (int) and runtime (str) for a given GCF algorithm. Run
         `tests` number of times and take the average."""
 
         runtimes = []
         for i in range(tests):
+
+            # Measure runtime with perf_counter
             start = perf_counter_ns()
+
+            # algorith is a var for whatever func we passed
             gcf = algorithm(nums)
+
             end = perf_counter_ns()
-            #
             runtimes.append((end - start) / 1_000_000)
 
         td = (sum(runtimes) / tests)
@@ -209,12 +215,23 @@ class GCFCalculator:
             gcf_values[name] = gcf
             runtimes += f"{name} algorithm runtime: {runtime}\n"
 
+        # Test that all functions returned the same value.
         self.same_gcf_check(gcf_values)
 
+        # Turn the list of ints into a single str
         num_str = self.convert_nums_to_str(nums)
+
+        # We need to check the GCF returned by all the functinos is the same
+        # to test for bugs in the functions, and if we've made it this far
+        # without getting an error, the first item in gcf_values suffices.
         gcf = list(gcf_values.values())[0]
         gcf = "1 (relatively prime)" if gcf == 1 else gcf
+
+        # Generate a message string with the results. If we need to get just
+        # the GCF instead of the message string, we can get that from the
+        # individual algorithm functions.
         results = f"{num_str}\nGCF: {gcf}\n{runtimes}"
+
         return results
 
 
@@ -228,17 +245,18 @@ class Test(GCFCalculator):
         unnoticed by the user, to check that the algorithms have been
         implemented correctly."""
 
-        # Expected GCFs: 9, 8, 2376, 10, 1
+        # Expected GCFs: 3, 1, 1, 7, 9, 8, 2376, 10, 1
         numbers = [[3, 7], [19, 3, 7], [2, 3], [7, 21], [18, 27],
                    [72, 40], [33264, 35640], [120, 50, 20], [1, 20]]
 
+        # Run each algorithm on each list of nums
         for nums in numbers:
             for name, algorithm in self.algos.items():
 
                 algo_gcf = self.get_algo_data(algorithm, nums, 1)[0]
+                # math.gcd is presumably always correct, so we test against it
                 py_math_gcd = gcd(*nums)
-                # print(algo_gcf)
-                # print(py_math_gcd)
+
                 if algo_gcf != py_math_gcd:
                     raise Exception(
                         f"{name} algorithm did not return the same result as math.gcd method\n"
@@ -247,6 +265,7 @@ class Test(GCFCalculator):
 
 
 def main():
+    # Run test on startup, raise exception if functions return incorrect GCF
     Test().correct_result_check()
 
     selections = {
@@ -254,9 +273,12 @@ def main():
         "2": ("Quick print sample GCFs", sample_data)}
 
     while True:
+
         for k, v in selections.items():
             print(f"{k}: {v[0]}")
+
         usr_in = input("Select function (q to quit): ").strip()
+
         if usr_in == "q":
             quit()
         elif usr_in in selections:
@@ -271,7 +293,7 @@ def sample_data(tests):
     """Print the GCF of pre-determined lists of nums, running all the
     implemented algos (see the .algos attr in the GCFCalculator class.)"""
 
-    list_one = [3, 15]
+    list_one = [3, 7]
     list_two = [18, 27]
     list_three = [20, 50, 120]
     list_four = [182664, 154875, 137688]
@@ -287,7 +309,7 @@ def sample_data(tests):
     gcf_four = GCFCalculator(list_four, tests).results
     print(gcf_four)
     # gcf_five = GCFCalculator(list_five).results
-    # print(gcf_six)
+    # print(gcf_five)
 
 
 def how_many_tests():
@@ -324,12 +346,14 @@ def user_input(tests):
         try:
             usr_in = input(
                 "Enter number (0 to finish entries): ").strip()
+
             if usr_in == "0":
                 break
             elif int(usr_in) < 1:
                 print(err)
             else:
                 nums.append(int(usr_in))
+
         except ValueError:
             print(err)
 
