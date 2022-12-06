@@ -59,6 +59,7 @@ class GCFCalculator:
             "Euclidean": self.gcf_by_euclidean,
             "Factoring": self.gcf_by_factoring,
             "Prime Fct": self.gcf_by_prime_factorization,
+            "BinaryGCD": self.gcf_by_binary_algorithm
         }
 
         return algos
@@ -97,6 +98,33 @@ class GCFCalculator:
             if q.is_integer():
                 factors += [int(q), i]
         return factors
+
+    def gcf_by_binary_algorithm(self, nums: list) -> int:
+        """Get the GCF of a list of numbers with the binary GCD algorithm."""
+
+        # Handle more than two numbers.
+        if len(nums) > 2:
+            a = self.gcf_by_binary_algorithm(nums[0:2])
+            nums = [a] + nums[2:]
+            return self.gcf_by_binary_algorithm(nums)
+
+        sorted_ab = sorted(nums[0:2], reverse=True)
+        a, b = sorted_ab[0], sorted_ab[1]
+
+        if a == 0:
+            return b
+        elif b == 0:
+            return a
+
+        if a % 2 == 0:
+            if b % 2 == 0:
+                return 2 * self.gcf_by_binary_algorithm([a >> 1, b >> 1])
+            else:
+                return self.gcf_by_binary_algorithm([a >> 1, b])
+        elif b % 2 == 0:
+            return self.gcf_by_binary_algorithm([a, b >> 1])
+        else:
+            return self.gcf_by_binary_algorithm([abs(a-b) >> 1, b])
 
     def gcf_by_euclidean(self, nums: list) -> int:
         """Get the GCF of a list of nums with the Euclidean Algorithm."""
@@ -223,6 +251,9 @@ class Test(GCFCalculator):
             for name, algorithm in self.algos.items():
 
                 algo_gcf = self.get_algo_data(algorithm, nums, 1)[0]
+
+                # print(f"Nums: {nums} Name: {name} gcf {algo_gcf}")
+
                 # math.gcd is presumably always correct, so we test against it
                 py_math_gcd = gcd(*nums)
 
