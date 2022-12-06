@@ -99,17 +99,9 @@ class GCFCalculator:
                 factors += [int(q), i]
         return factors
 
-    def gcf_by_binary_algorithm(self, nums: list) -> int:
-        """Get the GCF of a list of numbers with the binary GCD algorithm."""
-
-        # Handle more than two numbers.
-        if len(nums) > 2:
-            a = self.gcf_by_binary_algorithm(nums[0:2])
-            nums = [a] + nums[2:]
-            return self.gcf_by_binary_algorithm(nums)
-
-        sorted_ab = sorted(nums[0:2], reverse=True)
-        a, b = sorted_ab[0], sorted_ab[1]
+    def binary_gcd(self, a, b):
+        # a, b = sorted([a, b], reverse=True)
+        a, b = max([a, b]), min([a, b])
 
         if a == 0:
             return b
@@ -118,25 +110,19 @@ class GCFCalculator:
 
         if a % 2 == 0:
             if b % 2 == 0:
-                return 2 * self.gcf_by_binary_algorithm([a >> 1, b >> 1])
+                return 2 * self.binary_gcd(a >> 1, b >> 1)
             else:
-                return self.gcf_by_binary_algorithm([a >> 1, b])
+                return self.binary_gcd(a >> 1, b)
         elif b % 2 == 0:
-            return self.gcf_by_binary_algorithm([a, b >> 1])
+            return self.binary_gcd(a, b >> 1)
         else:
-            return self.gcf_by_binary_algorithm([abs(a-b) >> 1, b])
+            return self.binary_gcd(abs(a-b) >> 1, b)
 
-    def gcf_by_euclidean(self, nums: list) -> int:
-        """Get the GCF of a list of nums with the Euclidean Algorithm."""
+    def gcf_by_binary_algorithm(self, nums: list) -> int:
+        """Get the GCF of a list of numbers with the binary GCD algorithm."""
+        return reduce(self.binary_gcd, nums)
 
-        # Handle more than two numbers.
-        if len(nums) > 2:
-            a = self.gcf_by_euclidean(nums[0:2])
-            nums = [a] + nums[2:]
-            return self.gcf_by_euclidean(nums)
-
-        a, b = nums[0], nums[1]
-
+    def euclid(self, a, b):
         if a == 0:
             return b
         elif b == 0:
@@ -144,7 +130,12 @@ class GCFCalculator:
 
         r = a % b
 
-        return self.gcf_by_euclidean([b, r])  # def euclidean(nums):
+        return self.euclid(b, r)  # def euclidean(nums):
+
+    def gcf_by_euclidean(self, nums: list) -> int:
+        """Get the GCF of a list of nums with the Euclidean Algorithm."""
+
+        return reduce(self.euclid, nums)
 
     def gcf_by_factoring(self, nums: list) -> int:
         """Get the GCF of a list of nums by returning the max of their common factors."""
