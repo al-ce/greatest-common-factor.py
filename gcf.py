@@ -126,7 +126,7 @@ class GCFCalculator:
 
         td = (sum(runtimes) / tests)
 
-        return gcf, f"avg {td:.03f}ms over {tests} tests"
+        return gcf, f"{td:.03f}ms"
 
     def get_gcf_and_algo_runtimes(self, nums, tests):
         """Return the GCF of the list of nums and the runtime of each
@@ -138,7 +138,9 @@ class GCFCalculator:
         for name, algorithm in self.algorithms.items():
             gcf, runtime = self.get_algo_data(algorithm, nums, tests)
             gcf_values[name] = gcf
-            runtimes += f"{name} algorithm runtime: {runtime}\n"
+            runtimes += f"  {name}: {runtime}\n"
+
+
 
         # Test that all functions returned the same value.
         self.same_gcf_check(gcf_values)
@@ -151,7 +153,7 @@ class GCFCalculator:
         gcf = list(gcf_values.values())[0]
         gcf = "1 (relatively prime)" if gcf == 1 else gcf
 
-        results = f"{num_str}\nGCF: {gcf}\n{runtimes}"
+        results = f"{num_str}\nGCF: {gcf}\nTests ran: {tests}\nAverage algorithm runtimes:\n{runtimes}"
 
         return results
 
