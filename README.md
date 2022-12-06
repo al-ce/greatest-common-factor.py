@@ -49,7 +49,9 @@ The program displays the GCF of three lists of numbers. A fourth list with fairl
 
 ## :page_with_curl: Implemented Algorithms
 - [Euclidean Algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm)
-    - The `gcf_by_euclidean` function is called recursively.
+    - The `euclidean` function is called recursively on a pair of numbers. Python's built-in `reduce` function iterates over a list of numbers a pair at a time.
+- [Binary GCD Algorithm](https://en.wikipedia.org/wiki/Binary_GCD_algorithm)
+  - Implemented like the Euclidean algorithm, 
 - Factoring
     - The `factorization` function generates a list of all the factors of `n` through trial division by checking if `n/i` in a range of `2` to `sqrt(n) + 1` (rounded down) is an int and appending the quotient to the list.
     - The `gcf_by_factoring` function returns the `max` of the intersection of the sets of each list of factors.
@@ -57,6 +59,7 @@ The program displays the GCF of three lists of numbers. A fourth list with fairl
     - Using a binary tree of nodes with prime factor pairs, `gcf_by_prime_factorization` takes the list of primes provided by a binary tree of nodes with the prime factor pairs of a number.
     - The function returns the product of each common factor times the highest
       number of occurences of each factor in each number.
+
 
 ## Features
 
