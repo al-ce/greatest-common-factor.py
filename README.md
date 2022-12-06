@@ -55,11 +55,6 @@ The program displays the GCF of three lists of numbers. A fourth list with fairl
 - Factoring
     - The `factorization` function generates a list of all the factors of `n` through trial division by checking if `n/i` in a range of `2` to `sqrt(n) + 1` (rounded down) is an int and appending the quotient to the list.
     - The `gcf_by_factoring` function returns the `max` of the intersection of the sets of each list of factors.
-- [Prime factorization](https://www.calculatorsoup.com/calculators/math/prime-factors.php)
-    - Using a binary tree of nodes with prime factor pairs, `gcf_by_prime_factorization` takes the list of primes provided by a binary tree of nodes with the prime factor pairs of a number.
-    - The function returns the product of each common factor times the highest
-      number of occurences of each factor in each number.
-
 
 ## Features
 

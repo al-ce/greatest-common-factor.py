@@ -7,46 +7,6 @@ from math import gcd, sqrt
 from functools import reduce
 
 
-class Node:
-    def __init__(self, value: int):
-        self.value = value
-        self.left = None
-        self.right = None
-
-
-class PrimeFactorTree:
-    """Generate a binary tree of all the prime factor pairs of a number."""
-
-    def __init__(self, value: int):
-        self.prime_factors = []
-        self.root = self.prime_factorization(value)
-
-    def is_prime(self, n):
-        """Return True if n is prime, else return False."""
-
-        for i in range(2, n//2):
-            if (n % i) == 0:
-                return False
-        return True
-
-    def prime_factorization(self, n: int):
-        """Prime Factor Tree generator."""
-
-        node = Node(n)
-
-        if self.is_prime(n):
-            self.prime_factors.append(n)
-            return node
-
-        s = sqrt(n).__floor__()
-
-        for i in range(2, s + 1):
-            if node.value % i == 0:
-                self.prime_factorization(i)
-                self.prime_factorization(n//i)
-                break
-
-
 class GCFCalculator:
     def __init__(self, nums=[1, 1], tests=1):
         self.algorithms = self.get_algorithms_dict()
@@ -58,7 +18,6 @@ class GCFCalculator:
         algos = {
             "Euclidean": self.gcf_by_euclidean,
             "Factoring": self.gcf_by_factoring,
-            "Prime Fct": self.gcf_by_prime_factorization,
             "BinaryGCD": self.gcf_by_binary_algorithm
         }
 
@@ -147,33 +106,6 @@ class GCFCalculator:
         common_factors = set.intersection(*factors_sets)
 
         gcf = max(common_factors) if common_factors else 1
-
-        return gcf
-
-    def gcf_by_prime_factorization(self, nums: list) -> int:
-        """Get the GCF of a list of nums by returning the product of their
-        common prime factors multiplied by the highest occurence of these
-        factors across all nums."""
-
-        prime_factors_lists = [PrimeFactorTree(
-            num).prime_factors for num in nums]
-
-        common_factors = set(
-            [p for primes in prime_factors_lists for p in primes])
-
-        occurrences = []
-
-        for p in common_factors:
-            min_p = float('inf')
-            for primes in prime_factors_lists:
-                p_count = primes.count(p)
-                min_p = min(min_p, p_count)
-
-            # Add the highest number of occurrences of each prime factor that is
-            # common to each number to the occurrences list
-            occurrences.extend([p for i in range(min_p)])
-
-        gcf = reduce(lambda x, y: x*y, occurrences) if occurrences else 1
 
         return gcf
 
