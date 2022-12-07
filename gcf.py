@@ -3,11 +3,12 @@
 # https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 
 from time import perf_counter_ns
-from math import gcd, sqrt
+from math import gcd, prod, sqrt
 from functools import reduce
 
 
 class GCFCalculator:
+
     def __init__(self, nums=[1, 1], tests=1):
         self.algorithms = self.get_algorithms_dict()
         self.results = self.get_gcf_and_algo_runtimes(nums, tests)
@@ -18,7 +19,8 @@ class GCFCalculator:
         algos = {
             "Euclidean": self.gcf_by_euclidean,
             "Factoring": self.gcf_by_factoring,
-            "BinaryGCD": self.gcf_by_binary_algorithm
+            "BinaryGCD": self.gcf_by_binary_algorithm,
+            "PrimeFact": self.gcf_by_prime_factorization
         }
 
         return algos
@@ -109,6 +111,59 @@ class GCFCalculator:
 
         return gcf
 
+    def is_prime(self, n):
+        """Return True if n is prime, else return False."""
+
+        for i in range(2, n//2):
+            if (n % i) == 0:
+                return False
+        return True
+
+    def prime_factorization(self, n: int, prime_factors: list):
+        """Prime Factor Tree generator."""
+
+        if self.is_prime(n):
+            prime_factors.append(n)
+            return n, prime_factors
+
+        s = sqrt(n).__floor__()
+
+        for i in range(2, s + 1):
+            if n % i == 0:
+                self.prime_factorization(i, prime_factors)
+                self.prime_factorization(n//i, prime_factors)
+                break
+
+    def gcf_by_prime_factorization(self, nums: list) -> int:
+        """Get the GCF of a list of nums by returning the product of their
+        common prime factors multiplied by the highest occurence of these
+        factors across all nums."""
+
+        prime_factors_lists = []
+        for num in nums:
+            prime_factors = []
+            self.prime_factorization(num, prime_factors)
+            prime_factors_lists.append(prime_factors)
+
+        common_factors = set(
+            [p for primes in prime_factors_lists for p in primes])
+
+        occurrences = []
+
+        for p in common_factors:
+            min_p = float('inf')
+            for primes in prime_factors_lists:
+                p_count = primes.count(p)
+                min_p = min(min_p, p_count)
+
+            # Add the highest number of occurrences of each prime factor
+            # common to each number to the occurrences list
+            occurrences.extend([p for i in range(min_p)])
+
+        gcf = reduce(lambda x, y: x*y, occurrences) if occurrences else 1
+
+        return gcf
+
     def get_algo_data(self, algorithm: callable, nums: list, tests):
         """Return gcf (int) and runtime (str) for a given GCF algorithm. Run
         `tests` number of times and take the average."""
@@ -140,8 +195,6 @@ class GCFCalculator:
             gcf_values[name] = gcf
             runtimes += f"  {name}: {runtime}\n"
 
-
-
         # Test that all functions returned the same value.
         self.same_gcf_check(gcf_values)
 
@@ -169,7 +222,7 @@ class Test(GCFCalculator):
         implemented correctly."""
 
         # Expected GCFs: 3, 1, 1, 7, 9, 8, 2376, 10, 1
-        numbers = [[3, 7], [19, 3, 7], [2, 3], [7, 21], [18, 27],
+        numbers = [[64, 28], [3, 7], [19, 3, 7], [2, 3], [7, 21], [18, 27],
                    [72, 40], [33264, 35640], [120, 50, 20], [1, 20]]
 
         for nums in numbers:

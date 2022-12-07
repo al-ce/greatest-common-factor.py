@@ -9,7 +9,10 @@ Comparing the runtime of each algorithm is the more interesting part of this pro
 
 
 
-https://user-images.githubusercontent.com/23170004/205469921-06a6c7d9-232f-4d5e-bbc4-e02c6c636cbc.mp4
+
+https://user-images.githubusercontent.com/23170004/206089489-0d55aa04-f778-4dff-8674-2219f6356984.mp4
+
+
 
 
 ## Table of Contents
@@ -55,6 +58,9 @@ The program displays the GCF of three lists of numbers. A fourth list with fairl
 - Factoring
     - The `factorization` function generates a list of all the factors of `n` through trial division by checking if `n/i` in a range of `2` to `sqrt(n) + 1` (rounded down) is an int and appending the quotient to the list.
     - The `gcf_by_factoring` function returns the `max` of the intersection of the sets of each list of factors.
+- Prime Factorization
+    - Listing the prime factors common to each number, the GCF is the product of those common factors to the power of their highest occurence in each number's list of factor pairs. 
+      (e.g., the prime factorization of 18 is 2 x 3 x 3, of 27 is 3 x 3 x 3, so their gcf is 3 x 3 = 9)
 
 ## Features
 
@@ -92,45 +98,85 @@ https://user-images.githubusercontent.com/23170004/205469675-1789d443-f8ad-44c0-
 This is what the `sample_data` outputs on my machine after 150_000 tests:
 
 ```
-Numbers: 18 27
+Numbers: 3, 7
+GCF: 1 (relatively prime)
+Tests ran: 150000
+Average algorithm runtimes:
+  Euclidean: 0.001ms
+  Factoring: 0.001ms
+  BinaryGCD: 0.002ms
+  PrimeFact: 0.002ms
+
+Numbers: 18, 27
 GCF: 9
-Euclidean algorithm runtime: avg 0.001ms over 150000 tests
-Factoring algorithm runtime: avg 0.002ms over 150000 tests
-Prime Fct algorithm runtime: avg 0.011ms over 150000 tests
+Tests ran: 150000
+Average algorithm runtimes:
+  Euclidean: 0.001ms
+  Factoring: 0.002ms
+  BinaryGCD: 0.002ms
+  PrimeFact: 0.006ms
 
-Numbers: 20 50 120
+Numbers: 20, 50, 120
 GCF: 10
-Euclidean algorithm runtime: avg 0.002ms over 150000 tests
-Factoring algorithm runtime: avg 0.005ms over 150000 tests
-Prime Fct algorithm runtime: avg 0.019ms over 150000 tests
+Tests ran: 150000
+Average algorithm runtimes:
+  Euclidean: 0.001ms
+  Factoring: 0.004ms
+  BinaryGCD: 0.004ms
+  PrimeFact: 0.011ms
 
-Numbers: 182664 154875 137688
+Numbers: 182664, 154875, 137688
 GCF: 3
-Euclidean algorithm runtime: avg 0.004ms over 150000 tests
-Factoring algorithm runtime: avg 0.079ms over 150000 tests
-Prime Fct algorithm runtime: avg 0.176ms over 150000 tests
+Tests ran: 150000
+Average algorithm runtimes:
+  Euclidean: 0.002ms
+  Factoring: 0.066ms
+  BinaryGCD: 0.014ms
+  PrimeFact: 0.147ms
 ```
 
 And after 1_000_000 tests:
 
 ```
-Numbers: 18 27
+Numbers: 3, 7
+GCF: 1 (relatively prime)
+Tests ran: 1000000
+Average algorithm runtimes:
+  Euclidean: 0.000ms
+  Factoring: 0.001ms
+  BinaryGCD: 0.002ms
+  PrimeFact: 0.002ms
+
+Numbers: 18, 27
 GCF: 9
-Euclidean algorithm runtime: avg 0.001ms over 1000000 tests
-Factoring algorithm runtime: avg 0.002ms over 1000000 tests
-Prime Fct algorithm runtime: avg 0.009ms over 1000000 tests
+Tests ran: 1000000
+Average algorithm runtimes:
+  Euclidean: 0.000ms
+  Factoring: 0.002ms
+  BinaryGCD: 0.002ms
+  PrimeFact: 0.006ms
 
-Numbers: 20 50 120
+Numbers: 20, 50, 120
 GCF: 10
-Euclidean algorithm runtime: avg 0.002ms over 1000000 tests
-Factoring algorithm runtime: avg 0.004ms over 1000000 tests
-Prime Fct algorithm runtime: avg 0.015ms over 1000000 tests
+Tests ran: 1000000
+Average algorithm runtimes:
+  Euclidean: 0.001ms
+  Factoring: 0.004ms
+  BinaryGCD: 0.004ms
+  PrimeFact: 0.012ms
 
-Numbers: 182664 154875 137688
+Numbers: 182664, 154875, 137688
 GCF: 3
-Euclidean algorithm runtime: avg 0.003ms over 1000000 tests
-Factoring algorithm runtime: avg 0.066ms over 1000000 tests
-Prime Fct algorithm runtime: avg 0.154ms over 1000000 tests
+Tests ran: 1000000
+Average algorithm runtimes:
+  Euclidean: 0.002ms
+  Factoring: 0.067ms
+  BinaryGCD: 0.014ms
+  PrimeFact: 0.151ms
+
+1: Get GCF from user input of numbers
+2: Quick print sample GCFs
+Select function (q to quit):
 ```
 
 ## :clock11: TODOs
