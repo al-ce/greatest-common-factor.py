@@ -10,7 +10,8 @@ Comparing the runtime of each algorithm is the more interesting part of this pro
 
 
 
-https://user-images.githubusercontent.com/23170004/206089489-0d55aa04-f778-4dff-8674-2219f6356984.mp4
+https://user-images.githubusercontent.com/23170004/206095480-f5812031-6280-47ed-a027-eecacb0ec619.mp4
+
 
 
 
@@ -61,6 +62,8 @@ The program displays the GCF of three lists of numbers. A fourth list with fairl
 - Prime Factorization
     - Listing the prime factors common to each number, the GCF is the product of those common factors to the power of their highest occurence in each number's list of factor pairs. 
       (e.g., the prime factorization of 18 is 2 x 3 x 3, of 27 is 3 x 3 x 3, so their gcf is 3 x 3 = 9)
+- [math.gcd](https://docs.python.org/3/library/math.html?highlight=gcd#math.gcd)
+    - Python's `math` library provides a `gcd` function, which I use to test all the other implemented functions for accuracy. Beats the rest without breaking a sweat, so much so that I had to increase the significant digits of the performance results by two decimal places. No wonder, the `math` library is [written in C](https://github.com/python/cpython/blob/main/Modules/mathmodule.c)!
 
 ## Features
 
@@ -102,37 +105,41 @@ Numbers: 3, 7
 GCF: 1 (relatively prime)
 Tests ran: 150000
 Average algorithm runtimes:
-  Euclidean: 0.001ms
-  Factoring: 0.001ms
-  BinaryGCD: 0.002ms
-  PrimeFact: 0.002ms
+  Euclidean: 0.00056ms
+  BinaryGCD: 0.00198ms
+  Factoring: 0.00109ms
+  PrimeFact: 0.00228ms
+  math.gcd : 0.00020ms
 
 Numbers: 18, 27
 GCF: 9
 Tests ran: 150000
 Average algorithm runtimes:
-  Euclidean: 0.001ms
-  Factoring: 0.002ms
-  BinaryGCD: 0.002ms
-  PrimeFact: 0.006ms
+  Euclidean: 0.00049ms
+  BinaryGCD: 0.00154ms
+  Factoring: 0.00196ms
+  PrimeFact: 0.00586ms
+  math.gcd : 0.00020ms
 
 Numbers: 20, 50, 120
 GCF: 10
 Tests ran: 150000
 Average algorithm runtimes:
-  Euclidean: 0.001ms
-  Factoring: 0.004ms
-  BinaryGCD: 0.004ms
-  PrimeFact: 0.011ms
+  Euclidean: 0.00072ms
+  BinaryGCD: 0.00445ms
+  Factoring: 0.00409ms
+  PrimeFact: 0.01050ms
+  math.gcd : 0.00023ms
 
 Numbers: 182664, 154875, 137688
 GCF: 3
 Tests ran: 150000
 Average algorithm runtimes:
-  Euclidean: 0.002ms
-  Factoring: 0.066ms
-  BinaryGCD: 0.014ms
-  PrimeFact: 0.147ms
+  Euclidean: 0.00140ms
+  BinaryGCD: 0.01389ms
+  Factoring: 0.06552ms
+  PrimeFact: 0.16347ms
+  math.gcd : 0.00048ms
 ```
 
 And after 1_000_000 tests:
@@ -142,41 +149,41 @@ Numbers: 3, 7
 GCF: 1 (relatively prime)
 Tests ran: 1000000
 Average algorithm runtimes:
-  Euclidean: 0.000ms
-  Factoring: 0.001ms
-  BinaryGCD: 0.002ms
-  PrimeFact: 0.002ms
+  Euclidean: 0.00050ms
+  BinaryGCD: 0.00198ms
+  Factoring: 0.00108ms
+  PrimeFact: 0.00228ms
+  math.gcd : 0.00020ms
 
 Numbers: 18, 27
 GCF: 9
 Tests ran: 1000000
 Average algorithm runtimes:
-  Euclidean: 0.000ms
-  Factoring: 0.002ms
-  BinaryGCD: 0.002ms
-  PrimeFact: 0.006ms
+  Euclidean: 0.00049ms
+  BinaryGCD: 0.00156ms
+  Factoring: 0.00200ms
+  PrimeFact: 0.00622ms
+  math.gcd : 0.00020ms
 
 Numbers: 20, 50, 120
 GCF: 10
 Tests ran: 1000000
 Average algorithm runtimes:
-  Euclidean: 0.001ms
-  Factoring: 0.004ms
-  BinaryGCD: 0.004ms
-  PrimeFact: 0.012ms
+  Euclidean: 0.00072ms
+  BinaryGCD: 0.00449ms
+  Factoring: 0.00410ms
+  PrimeFact: 0.01054ms
+  math.gcd : 0.00022ms
 
 Numbers: 182664, 154875, 137688
 GCF: 3
 Tests ran: 1000000
 Average algorithm runtimes:
-  Euclidean: 0.002ms
-  Factoring: 0.067ms
-  BinaryGCD: 0.014ms
-  PrimeFact: 0.151ms
-
-1: Get GCF from user input of numbers
-2: Quick print sample GCFs
-Select function (q to quit):
+  Euclidean: 0.00140ms
+  BinaryGCD: 0.01398ms
+  Factoring: 0.06676ms
+  PrimeFact: 0.15062ms
+  math.gcd : 0.00024ms
 ```
 
 ## :clock11: TODOs

@@ -18,9 +18,10 @@ class GCFCalculator:
 
         algos = {
             "Euclidean": self.gcf_by_euclidean,
-            "Factoring": self.gcf_by_factoring,
             "BinaryGCD": self.gcf_by_binary_algorithm,
-            "PrimeFact": self.gcf_by_prime_factorization
+            "Factoring": self.gcf_by_factoring,
+            "PrimeFact": self.gcf_by_prime_factorization,
+            "math.gcd ": self.gcf_by_math_gcd,
         }
 
         return algos
@@ -164,6 +165,11 @@ class GCFCalculator:
 
         return gcf
 
+    def gcf_by_math_gcd(self, nums: list) -> int:
+        """Use Python's math.gcd function to  get the GCF of a list of nums."""
+
+        return reduce(gcd, nums)
+
     def get_algo_data(self, algorithm: callable, nums: list, tests):
         """Return gcf (int) and runtime (str) for a given GCF algorithm. Run
         `tests` number of times and take the average."""
@@ -181,7 +187,7 @@ class GCFCalculator:
 
         td = (sum(runtimes) / tests)
 
-        return gcf, f"{td:.03f}ms"
+        return gcf, f"{td:.5f}ms"
 
     def get_gcf_and_algo_runtimes(self, nums, tests):
         """Return the GCF of the list of nums and the runtime of each
